@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Roulette</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #17212b;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .roulette {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            font-size: 50px;
+        }
+        
+        button {
+            background: #5288c1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 Рулетка подарков</h1>
+        <p>Крутите и выигрывайте эксклюзивные призы!</p>
+        
+        <div class="roulette" id="roulette">
+            <div>🎰</div>
+            <div>🎰</div>
+            <div>🎰</div>
+        </div>
+        
+        <button id="spinBtn">Крутить за 5⭐</button>
+    </div>
+
+    <script>
+        const symbols = ["🍒", "🍋", "🍊", "🍇", "7️⃣", "💎", "🧸", "👑"];
+        const roulette = document.getElementById('roulette');
+        const spinBtn = document.getElementById('spinBtn');
+        
+        spinBtn.addEventListener('click', async () => {
+            spinBtn.disabled = true;
+            
+            // Анимация вращения
+            for (let i = 0; i < 15; i++) {
+                await new Promise(r => setTimeout(r, 100 + i*20));
+                roulette.children[0].textContent = randomSymbol();
+                roulette.children[1].textContent = randomSymbol();
+                roulette.children[2].textContent = randomSymbol();
+            }
+            
+            // Финальный результат
+            const result = [randomSymbol(), randomSymbol(), randomSymbol()];
+            roulette.children[0].textContent = result[0];
+            roulette.children[1].textContent = result[1];
+            roulette.children[2].textContent = result[2];
+            
+            // Проверка выигрыша
+            if (result[0] === result[1] && result[1] === result[2]) {
+                alert(`🎉 Вы выиграли: ${prizeName(result[0])}`);
+            }
+            
+            spinBtn.disabled = false;
+        });
+        
+        function randomSymbol() {
+            return symbols[Math.floor(Math.random() * symbols.length)];
+        }
+        
+        function prizeName(symbol) {
+            const prizes = {
+                "🍒": "10 звезд",
+                "🍋": "20 звезд",
+                "🍊": "50 звезд",
+                "🍇": "Футболка",
+                "7️⃣": "Кружка",
+                "💎": "Наушники",
+                "🧸": "Мишка Роза",
+                "👑": "Telegram Premium"
+            };
+            return prizes[symbol] || "Неизвестный приз";
+        }
+        
+        // Инициализация Telegram WebApp
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+            Telegram.WebApp.setHeaderColor('#17212b');
+            Telegram.WebApp.setBackgroundColor('#17212b');
+        }
+    </script>
+</body>
+</html>
